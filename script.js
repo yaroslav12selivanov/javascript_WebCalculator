@@ -11,19 +11,19 @@ function calculateLogics() {
         
         case "=":
           try {
-            display.innerText = eval(display.innerText);
-          } catch (element) {
+            display.innerText = safeEval(display.innerText);
+          } catch (error) {
             display.innerText = "Bruh... error";
           }
           break;
         
         case "%":
           let passedText = display.innerText + "/100";
-          display.innerText = eval(passedText);
+          display.innerText = safeEval(passedText);
           break;
   
         case "+/-":
-          display.innerText = "-"
+          display.innerText = (parseFloat(display.innerText) * -1).toString();
           break;
   
         default:
@@ -35,6 +35,16 @@ function calculateLogics() {
       }
     });
   });  
+}
+
+function safeEval(expression) {
+  // Так как eval() не безопасен, создаем простой парсер для базовых математических операций
+  // Можно использовать регулярные выражения для проверки допустимых символов
+  if (/^[0-9+\-*/(). ]+$/.test(expression)) {
+    return Function(`'use strict'; return (${expression})`)();
+  } else {
+    throw new Error("Invalid input");
+  }
 }
 
 calculateLogics();
